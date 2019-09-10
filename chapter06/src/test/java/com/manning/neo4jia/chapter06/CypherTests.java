@@ -2,6 +2,7 @@ package com.manning.neo4jia.chapter06;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -121,6 +122,32 @@ public class CypherTests {
 
 
         ExecutionResult result = engine.execute(cql);
+        logger.info("Execution result:" + result.dumpToString());
+    }
+
+    @Test
+    public void loading_multiple_nodes_by_ids() {
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
+
+        String cql = "start user=node(1, 2)\n" +
+                "match user-[:HAS_SEEN]->(movie)\n" +
+                "return distinct movie;\n";
+
+
+        ExecutionResult result = engine.execute(cql);
+        logger.info("Execution result:" + result.dumpToString());
+    }
+
+    @Test
+    public void using_index_to_lookup_the_starting_nodes_with_native_lucene_query() {
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
+
+        String cql = "start john=node:users('name:John*') return john";
+
+
+        ExecutionResult result = engine.execute(cql);
+
+        Assert.assertNotNull(result.dumpToString());
         logger.info("Execution result:" + result.dumpToString());
     }
 
