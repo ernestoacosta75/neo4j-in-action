@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,13 +143,25 @@ public class CypherTests {
     public void using_index_to_lookup_the_starting_nodes_with_native_lucene_query() {
         ExecutionEngine engine = new ExecutionEngine(graphDb);
 
-        String cql = "start john=node:users('name:John*') return john";
+        String cql = "start john=node:users(\"name:John* AND year_of_birth:[1950 TO 1982]\") return john";
 
+        logger.debug("cql:" + cql);
 
-        ExecutionResult result = engine.execute(cql);
+        Transaction tx = graphDb.beginTx();
 
-        Assert.assertNotNull(result.dumpToString());
-        logger.info("Execution result:" + result.dumpToString());
+        try{
+            ExecutionResult result = engine.execute(cql);
+
+            Assert.assertNotNull(result.dumpToString());
+            logger.debug("Execution result:" + result.dumpToString());
+            tx.success();
+        }
+        catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        finally {
+            tx.close();
+        }
     }
 
     //all other cyphe queries used throughout chapter 6 are listed in the src/test/resources/cypher_plain_text.txt file in this project

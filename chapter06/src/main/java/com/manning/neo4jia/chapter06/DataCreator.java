@@ -71,10 +71,9 @@ public class DataCreator {
                     if (n.hasProperty("year_of_birth")) {
                         usersIndex.add(n, "year_of_birth", n.getProperty("year_of_birth"));
                     }
-
-
                 }
             }
+            logger.info("created index users");
             tx.success();
         } finally {
             tx.finish();
