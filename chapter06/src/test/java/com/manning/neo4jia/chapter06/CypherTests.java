@@ -110,6 +110,20 @@ public class CypherTests {
         logger.info("Execution result:" + result.dumpToString());
     }
 
+    @Test
+    public void find_movies_johns_friends_have_seen_without_include_films_john_has_seen() {
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
+
+        String cql = "start john=node:users(name = \"John Johnson\")\n" +
+                "match john-[:IS_FRIEND_OF]->(user)-[:HAS_SEEN]->(movie) \n" +
+                "where NOT john -[:HAS_SEEN] ->(movie) \n" +
+                "return movie.name;\n";
+
+
+        ExecutionResult result = engine.execute(cql);
+        logger.info("Execution result:" + result.dumpToString());
+    }
+
     //all other cyphe queries used throughout chapter 6 are listed in the src/test/resources/cypher_plain_text.txt file in this project
 
 }
