@@ -54,6 +54,7 @@ public class DataCreator {
         usersAndMovies.createMoviesNodes();
         usersAndMovies.addTypePropertiesToNodes();
         usersAndMovies.addPropertiesToRelationships();
+        usersAndMovies.addLabelToUsers();
         indexAllUsers();
         graphDb.shutdown();
     }

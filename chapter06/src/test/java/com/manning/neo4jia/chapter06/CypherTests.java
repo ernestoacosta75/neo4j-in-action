@@ -36,6 +36,7 @@ public class CypherTests {
         dataCreator.recreateData();
 
         graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(STORE_DIR);
+
     }
 
     @After
@@ -163,6 +164,47 @@ public class CypherTests {
             tx.close();
         }
     }
+
+    @Test
+    public void using_schema_based_index_to_lookup_the_starting_nodes() {
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
+
+
+        String cql = "MATCH (john:USER) WHERE john.name = \"John Johnson\" RETURN john";
+
+        ExecutionResult result = engine.execute(cql);
+
+        Assert.assertNotNull(result.dumpToString());
+        logger.debug("\nExecution result:" + result.dumpToString());
+    }
+
+    @Test
+    public void using_multiple_start_nodes_in_cypher() {
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
+
+        String cql = "MATCH (u:USER)-[:HAS_SEEN]->(movie) WHERE u.name = \"John Jhonson\" OR u.name = \"Jack Jeffries\"  RETURN DISTINCT movie";
+
+
+        ExecutionResult result = engine.execute(cql);
+
+        Assert.assertNotNull(result.dumpToString());
+        logger.debug("Execution result:" + result.dumpToString());
+    }
+
+    @Test
+    public void filtering_data() {
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
+
+        String cql = "MATCH (u:USER)-[:IS_FRIEND_OF]-(friend) WHERE friend.year_of_birth > 1980 RETURN friend";
+
+
+        ExecutionResult result = engine.execute(cql);
+
+        Assert.assertNotNull(result.dumpToString());
+        logger.debug("Execution result:" + result.dumpToString());
+    }
+
+
 
     //all other cyphe queries used throughout chapter 6 are listed in the src/test/resources/cypher_plain_text.txt file in this project
 

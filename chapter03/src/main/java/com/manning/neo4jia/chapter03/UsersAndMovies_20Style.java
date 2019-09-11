@@ -79,6 +79,8 @@ public class UsersAndMovies_20Style {
     public void addMorePropertiesToUsers() {
         try (Transaction tx = graphDb.beginTx()) {
             user1.setProperty("year_of_birth", 1982);
+            user3.setProperty("year_of_birth", 1983);
+            user1.setProperty("year_of_birth", 1984);
             user2.setProperty("locked", true);
             user3.setProperty("cars_owned", new String[]{"BMW", "Audi"});
             tx.success();
@@ -164,6 +166,32 @@ public class UsersAndMovies_20Style {
             movie1.addLabel(moviesLabel);
             movie2.addLabel(moviesLabel);
             movie3.addLabel(moviesLabel);
+
+            tx.success();
+        }
+
+    }
+
+    public void addLabelToUsers() {
+        Label userLabel = DynamicLabel.label("USER");
+
+        try (Transaction tx = graphDb.beginTx()) {
+            try {
+                graphDb.schema().indexFor(DynamicLabel.label("USER")).on("name").create();
+            } catch (Exception e) {
+                //ignore if index already exist
+            }
+
+            tx.success();
+        }
+
+        try (Transaction tx = graphDb.beginTx()) {
+            // Need a new tx or else you get the following error:
+            // Cannot perform data updates in a transaction that has
+            // performed schema updates.
+            user1.addLabel(userLabel);
+            user2.addLabel(userLabel);
+            user3.addLabel(userLabel);
 
             tx.success();
         }
