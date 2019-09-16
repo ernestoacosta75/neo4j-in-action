@@ -204,6 +204,47 @@ public class CypherTests {
         logger.debug("Execution result:" + result.dumpToString());
     }
 
+    @Test
+    public void returning_paths() {
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
+
+        String cql = "MATCH recPath = (john)-[:IS_FRIEND_OF]->(user)-[:HAS_SEEN]->(film) WHERE not (john)-[:HAS_SEEN]->(film) RETURN film.name, recPath";
+
+
+        ExecutionResult result = engine.execute(cql);
+
+        Assert.assertNotNull(result.dumpToString());
+        logger.debug("Execution result:" + result.dumpToString());
+    }
+
+    /**
+     * To page Cypher query results, Neo4j has three self-explanatory clauses:
+     * order - Orders the full result set before paging, so that paging returns
+     *         consistent result regardless of wether you're going forward or
+     *         backward through the pages
+     *
+     * skip - Offsets the result set so you can go to a specified page
+     *
+     * limit - Limits the number of returned results to the page size
+     *
+     */
+    @Test
+    public void paging_results() {
+        // Ej: To display only 20 movies per web page, ordered by movie name.
+        // To query the graph to get such paged results, you'd use the order,
+        // limit and skip clauses. The following query returns the third page (entries 21-30)
+
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
+
+        String cql = "MATCH (john)-[:HAS_SEEN]->(film) WHERE john.name = \"John Johnson\"  RETURN film ORDER BY film.name SKIP 20 LIMIT 10";
+
+
+        ExecutionResult result = engine.execute(cql);
+
+        Assert.assertNotNull(result.dumpToString());
+        logger.debug("Execution result:" + result.dumpToString());
+    }
+
 
 
     //all other cyphe queries used throughout chapter 6 are listed in the src/test/resources/cypher_plain_text.txt file in this project
