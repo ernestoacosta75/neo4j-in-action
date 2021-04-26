@@ -15,7 +15,7 @@
     <name>chapter10-performance-demos-embedded</name>
 
     <properties>
-        <commons-io.version>2.3</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <spring.version>3.2.8.RELEASE</spring.version>
     </properties>
 
